@@ -39,6 +39,7 @@ int main(int argc, char* argv[]){
 
     int n;
     std::cin >> n;
+    n--; // Start at idx 0
 
     // Get aminoacid's powers
     std::vector<int> powers(n); 
