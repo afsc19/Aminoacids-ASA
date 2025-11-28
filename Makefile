@@ -5,6 +5,7 @@ LDFLAGS = -lm
 
 TARGET = projeto
 SRC = projeto.cpp
+EXAMPLE = tests/example1.in
 
 all: $(TARGET)
 
@@ -16,3 +17,6 @@ clean:
 
 run: $(TARGET)
 	./$(TARGET)
+
+test: $(TARGET)
+	./$(TARGET) < $(EXAMPLE)

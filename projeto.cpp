@@ -80,6 +80,6 @@ int main(int argc, char* argv[]){
     
 
 
-    std::cout << "the finale";
+    std::cout << "the finale\n";
     return 0;
 }
