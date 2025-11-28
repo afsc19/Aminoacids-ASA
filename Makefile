@@ -3,7 +3,7 @@ CFLAGS = -std=c++11 -O3 -Wall
 LDFLAGS = -lm
 
 
-TARGET = projeto.bin
+TARGET = projeto
 SRC = projeto.cpp
 
 all: $(TARGET)
