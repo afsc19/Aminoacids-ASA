@@ -16,19 +16,21 @@ int aIdx(char c) {
         case 'N': return 1;
         case 'A': return 2;
         case 'B': return 3;
-        default: return -1;
+        default: 
+            printf("Invalid char detected\n");
+            exit(1);
     }
 }
 
 
-int getAfinity(char bioClassLeft, char bioClassRight){
-    int l = aIdx(bioClassLeft), r = aIdx(bioClassRight);
-    if (l<0 || r<0)
-        return -1;
-    return afinity[l][r];
+int getAffinity(int bioClassLeft, int bioClassRight){
+    return afinity[bioClassLeft][bioClassRight];
 }
 
-int getEnergy(int i, std::vector<int> powers, std::vector<char> acids)
+int getEnergy(int i, std::vector<int> &powers, std::vector<int> &bioClasses){
+    return powers[i-1] * powers[i] * getAffinity(bioClasses[i-1], bioClasses[i]) +
+           powers[i] * powers[i+1] * getAffinity(bioClasses[i], bioClasses[i+1]);
+}
 
 
 int main(int argc, char* argv[]){
@@ -40,15 +42,21 @@ int main(int argc, char* argv[]){
 
     // Get aminoacid's powers
     std::vector<int> powers(n); 
-    for (int i = 0; i < n; ++i)
+    for (int i = 0; i < n; i++)
         std::cin >> powers[i];
 
     // Get aminoacid's classes
-    std::vector<char> bioClasses(n);
-    for (int i = 0; i < n; ++i) {
-        bioClasses[i] = aIdx(std::cin);
-        std::cin >> bioClasses[i];
+    std::vector<char> bioClassesChars(n);
+    for (int i = 0; i < n; i++) {
+        std::cin >> bioClassesChars[i];
     }
+
+    std::vector<int> bioClasses(n);
+    for (int i = 0; i < n; i++) {
+        int current = aIdx(bioClassesChars[i]);
+        bioClasses[i] = current;
+    }
+
 
 
 
