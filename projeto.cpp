@@ -23,13 +23,24 @@ int aIdx(char c) {
 }
 
 
-int getAffinity(int bioClassLeft, int bioClassRight){
-    return afinity[bioClassLeft][bioClassRight];
+int getAffinity(int iLeft, std::vector<int> &bioClasses){
+    int iRight = iLeft+1;
+    if (iLeft==0 || iRight == bioClasses.capacity())
+        return 1;
+    else
+        return afinity[bioClasses[iLeft]][bioClasses[iRight]];
+}
+
+int getPower(int i, std::vector<int> &powers){
+    if (i==0 || i==powers.capacity())
+        return 1;
+    else
+        return powers[i];
 }
 
 int getEnergy(int i, std::vector<int> &powers, std::vector<int> &bioClasses){
-    return powers[i-1] * powers[i] * getAffinity(bioClasses[i-1], bioClasses[i]) +
-           powers[i] * powers[i+1] * getAffinity(bioClasses[i], bioClasses[i+1]);
+    return powers[i-1] * powers[i] * getAffinity(i-1, bioClasses) +
+           powers[i] * powers[i+1] * getAffinity(i, bioClasses);
 }
 
 
