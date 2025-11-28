@@ -41,4 +41,5 @@
 *.dwo
 
 
-./projeto
+projeto
+.vscode
