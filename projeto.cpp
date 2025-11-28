@@ -17,30 +17,30 @@ int aIdx(char c) {
         case 'A': return 2;
         case 'B': return 3;
         default: 
-            printf("Invalid char detected\n");
+            printf("Invalid char detected: %c\n", c);
             exit(1);
     }
 }
 
 
-int getAffinity(int iLeft, std::vector<int> &bioClasses){
+int getAffinity(int iLeft, const std::vector<int> &bioClasses){
     int iRight = iLeft+1;
-    if (iLeft==0 || iRight == bioClasses.capacity())
+    if (iLeft==-1 || iRight == static_cast<int>(bioClasses.size()))
         return 1;
     else
         return afinity[bioClasses[iLeft]][bioClasses[iRight]];
 }
 
-int getPower(int i, std::vector<int> &powers){
-    if (i==0 || i==powers.capacity())
+int getPower(int i, const std::vector<int> &powers){
+    if (i==-1 || i == static_cast<int>(powers.size()))
         return 1;
     else
         return powers[i];
 }
 
 int getEnergy(int i, std::vector<int> &powers, std::vector<int> &bioClasses){
-    return powers[i-1] * powers[i] * getAffinity(i-1, bioClasses) +
-           powers[i] * powers[i+1] * getAffinity(i, bioClasses);
+    return getPower(i-1, powers) * getPower(i, powers) * getAffinity(i-1, bioClasses) +
+           getPower(i, powers) * getPower(i+1, powers) * getAffinity(i, bioClasses);
 }
 
 
@@ -50,7 +50,6 @@ int main(int argc, char* argv[]){
 
     int n;
     std::cin >> n;
-    n--; // Start at idx 0
 
     // Get aminoacid's powers
     std::vector<int> powers(n); 
@@ -69,12 +68,14 @@ int main(int argc, char* argv[]){
         bioClasses[i] = current;
     }
 
+    std::cout << getEnergy(0, powers, bioClasses) << "\n";
 
 
 
 
-    std::cout << finalEnergy << "\n";
-    std::cout << finalSequence << "\n";
+
+    //std::cout << finalEnergy << "\n";
+    //std::cout << finalSequence << "\n";
 
     
 
