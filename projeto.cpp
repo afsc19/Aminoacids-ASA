@@ -32,14 +32,14 @@ int aIdx(char c) {
     }
 }
 
-int getAffinity(int l, int r, const std::vector<bioval>& bioClasses) {
+bioval getAffinity(int l, int r, const std::vector<bioval>& bioClasses) {
     if (l < 0 || r >= static_cast<int>(bioClasses.size()))
         return 1;
     else
         return afinity[bioClasses[l]][bioClasses[r]];
 }
 
-int getPower(int i, const std::vector<powerval>& powers) {
+powerval getPower(int i, const std::vector<powerval>& powers) {
     if (i == -1 || i == static_cast<int>(powers.size()))
         return 1;
     else
@@ -48,6 +48,8 @@ int getPower(int i, const std::vector<powerval>& powers) {
 
 val getEnergy(int l, int i, int r, const std::vector<powerval>& powers,
               const std::vector<bioval>& bioClasses) {
+    // std::cout << "l=" << l << ", i=" << i << ", r=" << r << ", pl=" << getPower(l, powers) << ", pi=" << getPower(i, powers) << ", pr=" << getPower(r, powers) << ", ali=" << getAffinity(l, i, bioClasses) << ", air=" << getAffinity(i, r, bioClasses) << ";\n";
+    // std::cout << "stage1=" << getPower(l, powers) * getPower(i, powers) * getAffinity(l, i, bioClasses) << ", stage2=" << getPower(i, powers) * getPower(r, powers) * getAffinity(i, r, bioClasses) << ";\n";
     return getPower(l, powers) * getPower(i, powers) *
                getAffinity(l, i, bioClasses) +
            getPower(i, powers) * getPower(r, powers) *
@@ -61,12 +63,15 @@ val solve(int boundl, int boundr, std::vector<std::vector<DPEntry>>& dp,
     int vectl = boundl;
     int vectr = boundr - boundl;
     
-    if (dp[vectl][vectr].choice != -1)
+    if (dp[vectl][vectr].choice != -1){
+        // std::cout << "For the boundl=" << boundl << ", boundr=" << boundr << ";         KNOWN  " << dp[vectl][vectr].energy << "\n";
         return dp[vectl][vectr].energy;
+    }
     
     if (boundl == boundr) {
         dp[vectl][vectr].energy = getEnergy(boundl-1, boundl, boundl+1, powers, bioClasses);
         dp[vectl][vectr].choice = boundl;
+        // std::cout << "For the boundl=" << boundl << ", boundr=" << boundr << ";         SINGLE " << dp[vectl][vectr].energy << "\n";
         return dp[vectl][vectr].energy;
     }
     
