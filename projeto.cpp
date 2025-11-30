@@ -120,7 +120,13 @@ int main(int argc, char* argv[]) {
     for (int i=0; i<n; i++){
         std::cout << "Trying number " << i << " : '" << getEnergySequence(i-1, i,i, i+1, m, powers, bioClasses).second << "'\n";
     }
-    std::cout << "Beta trial: '" << getEnergySequence(-1, 0,n-1, n, m, powers, bioClasses).second << "'\n";
+    par res = getEnergySequence(-1, 0,n-1, n, m, powers, bioClasses);
+    std::cout << res.second << "\n";
+
+    for (int i = 0; i<n; i++){
+        std::cout << res.first[i]+1 << " ";
+    }
+    std::cout << "\b\n";
 
     //std::cout << getEnergySequence(0, n - 1, m, powers, bioClasses) << "\n";
 
