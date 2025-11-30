@@ -6,7 +6,7 @@ LDFLAGS = -lm
 
 TARGET = projeto
 SRC = projeto.cpp
-EXAMPLE = tests/example1.in
+EXAMPLE = tests/example2.in
 
 all: $(TARGET)
 
