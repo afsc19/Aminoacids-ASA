@@ -67,7 +67,7 @@ par getEnergySequence(int boundl, int boundr, std::vector<std::vector<par>>& m,
     for (int i = boundl; i <= boundr; i++) {
         // add(m(l, i) * m(i+1, r) *
         par solution = par{};
-        // Left first so the first added solutionuence is already lexicographically inferior.
+        // Left first so the first added solution is already lexicographically inferior.
         if (i>boundl){
             par subseql = getEnergySequence(boundl, i-1, m, powers, bioClasses);
             solution.first.insert(solution.first.end(), subseql.first.begin(), subseql.first.end());
