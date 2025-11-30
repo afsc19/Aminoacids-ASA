@@ -4,8 +4,15 @@
 #include <vector>
 #include <utility>
 
+using powerval = unsigned long long;
+using bioval = short;
 using val = unsigned long long;
-using par = std::pair<std::vector<int>, val>;
+// using par = std::pair<std::vector<int>, val>;
+struct DPEntry {
+    val energy;
+    int choice;  // which i was removed last
+    DPEntry() : energy(0), choice(-1) {} // initialization
+};
 
 int afinity[4][4] = {{1, 3, 1, 3}, {5, 1, 0, 1}, {0, 1, 0, 4}, {1, 3, 2, 3}};
 
@@ -21,74 +28,88 @@ int aIdx(char c) {
             return 3;
         default:
             printf("Invalid char detected: %c\n", c);
-            exit(1);
+            exit(3);
     }
 }
 
-int getAffinity(int l, int r, const std::vector<int>& bioClasses) {
+int getAffinity(int l, int r, const std::vector<bioval>& bioClasses) {
     if (l < 0 || r >= static_cast<int>(bioClasses.size()))
         return 1;
     else
         return afinity[bioClasses[l]][bioClasses[r]];
 }
 
-int getPower(int i, const std::vector<int>& powers) {
+int getPower(int i, const std::vector<powerval>& powers) {
     if (i == -1 || i == static_cast<int>(powers.size()))
         return 1;
     else
         return powers[i];
 }
 
-val getEnergy(int l, int i, int r, std::vector<int>& powers,
-              std::vector<int>& bioClasses) {
+val getEnergy(int l, int i, int r, const std::vector<powerval>& powers,
+              const std::vector<bioval>& bioClasses) {
     return getPower(l, powers) * getPower(i, powers) *
                getAffinity(l, i, bioClasses) +
            getPower(i, powers) * getPower(r, powers) *
                getAffinity(i, r, bioClasses);
 }
 
-// val newValue(int l, int vectr, int value, std::vector<std::vector<val>>& m) {
-//     m[l][vectr] = value;
-//     return value;
-// }
 
-par getEnergySequence(int boundl, int boundr, std::vector<std::vector<par>>& m,
-                      std::vector<int>& powers, std::vector<int>& bioClasses) {
+
+val solve(int boundl, int boundr, std::vector<std::vector<DPEntry>>& dp,
+          const std::vector<powerval>& powers, const std::vector<bioval>& bioClasses) {
     int vectl = boundl;
-    int vectr = boundr-boundl;
-    if (!m[vectl][vectr].first.empty())
-        return m[vectl][vectr];
-    if (boundl==boundr){
-        par newPar = par{std::vector<int>(1, boundl), getEnergy(boundl-1, boundl, boundl+1, powers, bioClasses)};
-        m[vectl][vectr] = newPar;
-        return newPar;
+    int vectr = boundr - boundl;
+    
+    if (dp[vectl][vectr].choice != -1)
+        return dp[vectl][vectr].energy;
+    
+    if (boundl == boundr) {
+        dp[vectl][vectr].energy = getEnergy(boundl-1, boundl, boundl+1, powers, bioClasses);
+        dp[vectl][vectr].choice = boundl;
+        return dp[vectl][vectr].energy;
     }
-    par bestSolution;
+    
+    int solution = boundl;
+    val bestEnergy = 0;
+    
     for (int i = boundl; i <= boundr; i++) {
-        // add(m(l, i) * m(i+1, r) *
-        par solution = par{};
-        // Left first so the first added solution is already lexicographically inferior.
-        if (i>boundl){
-            par subseql = getEnergySequence(boundl, i-1, m, powers, bioClasses);
-            solution.first.insert(solution.first.end(), subseql.first.begin(), subseql.first.end());
-            solution.second += subseql.second;
+        val energy = 0;
+        
+        if (i > boundl)
+            energy += solve(boundl, i-1, dp, powers, bioClasses);
+        if (i < boundr)
+            energy += solve(i+1, boundr, dp, powers, bioClasses);
+        
+        energy += getEnergy(boundl-1, i, boundr+1, powers, bioClasses);
+        
+        if (i == boundl || energy >= bestEnergy) {
+            bestEnergy = energy;
+            solution = i;
         }
-        if (i<boundr){
-            par subseqr = getEnergySequence(i + 1, boundr, m, powers, bioClasses);
-            solution.first.insert(solution.first.end(), subseqr.first.begin(), subseqr.first.end());
-            solution.second += subseqr.second;
-        }
-
-        solution.first.push_back(i);
-        solution.second += getEnergy(boundl-1, i, boundr+1, powers, bioClasses);
-
-
-        if (bestSolution.first.empty() || bestSolution.second <= solution.second)
-            bestSolution = solution;
     }
-    // std::cout << "For the boundl=" << boundl << ", boundr=" << boundr << ";         we got " << bestSolution.second << "\n";
-    m[vectl][vectr] = bestSolution;
-    return bestSolution;
+    
+    dp[vectl][vectr].energy = bestEnergy;
+    dp[vectl][vectr].choice = solution;
+    // std::cout << "For the boundl=" << boundl << ", boundr=" << boundr << ";         we got " << bestEnergy << "\n";
+    return bestEnergy;
+}
+
+void traceback(int boundl, int boundr, const std::vector<std::vector<DPEntry>>& dp,
+                 std::vector<int>& sequence) {
+    if (boundl > boundr) return;
+    
+    int vectl = boundl;
+    int vectr = boundr - boundl;
+    int i = dp[vectl][vectr].choice;
+    
+    // traceback left, then right, then add i (which was removed last)
+    if (i > boundl)
+        traceback(boundl, i-1, dp, sequence);
+    if (i < boundr)
+        traceback(i+1, boundr, dp, sequence);
+    
+    sequence.push_back(i);
 }
 
 int main(int argc, char* argv[]) {
@@ -99,7 +120,7 @@ int main(int argc, char* argv[]) {
     std::cin >> n;
 
     // Get aminoacid's powers
-    std::vector<int> powers(n);
+    std::vector<powerval> powers(n);
     for (int i = 0; i < n; i++)
         std::cin >> powers[i];
 
@@ -109,24 +130,27 @@ int main(int argc, char* argv[]) {
         std::cin >> bioClassesChars[i];
     }
 
-    std::vector<int> bioClasses(n);
+    std::vector<bioval> bioClasses(n);
     for (int i = 0; i < n; i++) {
         int current = aIdx(bioClassesChars[i]);
         bioClasses[i] = current;
     }
 
-    // Alocate n*n matrix for results
-    std::vector<std::vector<par>> m(n, std::vector<par>(n, par{}));
+    
+    std::vector<std::vector<DPEntry>> dp(n, std::vector<DPEntry>(n));
+    
 
-    // for (int i=0; i<n; i++){
-    //     std::cout << "Trying number " << i << " : '" << getEnergySequence(i,i, m, powers, bioClasses).second << "'\n";
-    // }
-    par res = getEnergySequence(0, n-1, m, powers, bioClasses);
-    std::cout << res.second << "\n";
-
-    for (int i = 0; i<n-1; i++){
-        std::cout << res.first[i]+1 << " ";
+    val totalEnergy = solve(0, n-1, dp, powers, bioClasses);
+    
+    // Get the sequence.
+    std::vector<int> sequence;
+    traceback(0, n-1, dp, sequence);
+    
+    std::cout << totalEnergy << "\n";
+    for (int i = 0; i < n; i++) {
+        if (i > 0) std::cout << " ";
+        std::cout << sequence[i] + 1;
     }
-    std::cout << res.first[n-1]+1 << "\n";
+    std::cout << "\n";
     return 0;
 }
