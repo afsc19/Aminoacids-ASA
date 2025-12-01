@@ -46,3 +46,4 @@ bruteforce
 .vscode
 valgrind.txt
 vgcore.*
+!*.sol.out

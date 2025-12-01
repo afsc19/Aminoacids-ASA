@@ -89,10 +89,10 @@ int main() {
     int n;
     std::cin >> n;
 
-    if (n > 10) {
-        std::cerr << "Brute force only works for n <= 10\n";
-        return 1;
-    }
+    // if (n > 10) {
+    //     std::cerr << "Brute force only works for n <= 10\n";
+    //     return 1;
+    // }
 
     std::vector<powerval> powers(n);
     for (int i = 0; i < n; i++)
