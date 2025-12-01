@@ -8,7 +8,7 @@ TARGET = projeto
 SRC = projeto.cpp
 TARGET_NONDP = bruteforce
 SRC_NONDP = bruteforce.cpp
-EXAMPLE = tests/test1.in
+EXAMPLE = tests/test1000
 
 all: $(TARGET)
 
@@ -28,10 +28,11 @@ run: $(TARGET)
 	./$(TARGET)
 
 test: $(TARGET)
-	time ./$(TARGET) < $(EXAMPLE)
+	time ./$(TARGET) < $(EXAMPLE).in > $(EXAMPLE).out
+	diff $(EXAMPLE).out $(EXAMPLE).sol.out
 
 test_nondp: $(TARGET_NONDP)
-	time ./$(TARGET_NONDP) < $(EXAMPLE)
+	time ./$(TARGET_NONDP) < $(EXAMPLE).in
 
 val: $(TARGET)_debug
-	valgrind --leak-check=full ./$(TARGET) < $(EXAMPLE) 2> valgrind.txt || rm ./vgcore.*
+	valgrind --leak-check=full ./$(TARGET) < $(EXAMPLE).in 2> valgrind.txt || rm ./vgcore.*

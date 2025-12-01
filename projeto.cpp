@@ -59,6 +59,7 @@ val getEnergy(int l, int i, int r, const std::vector<powerval>& powers,
 
 val solve(int boundl, int boundr, std::vector<std::vector<DPEntry>>& dp,
           const std::vector<powerval>& powers, const std::vector<bioval>& bioClasses) {
+    // std::cout << "doing l=" << boundl << ", r=" << boundr << "\n";
     int vectl = boundl;
     int vectr = boundr - boundl;
     
@@ -81,9 +82,9 @@ val solve(int boundl, int boundr, std::vector<std::vector<DPEntry>>& dp,
         val energy = 0;
         
         if (i > boundl)
-            energy += solve(boundl, i-1, dp, powers, bioClasses);
+            energy += dp[boundl][i-1 - boundl].energy; //solve(boundl, i-1, dp, powers, bioClasses);
         if (i < boundr)
-            energy += solve(i+1, boundr, dp, powers, bioClasses);
+            energy += dp[i+1][boundr-(i+1)].energy; //solve(i+1, boundr, dp, powers, bioClasses);
         
         energy += getEnergy(boundl-1, i, boundr+1, powers, bioClasses);
         
@@ -142,9 +143,12 @@ int main(int argc, char* argv[]) {
 
     
     std::vector<std::vector<DPEntry>> dp(n, std::vector<DPEntry>(n));
+
     
-    // TODO remove recursivity
-    val totalEnergy = solve(0, n-1, dp, powers, bioClasses);
+    val totalEnergy = 0;
+    for (int i=0; i<n; i++)
+        for (int j=0; j<n-i; j++)
+            totalEnergy = solve(j, j+i, dp, powers, bioClasses);
     
     // Get the sequence.
     std::vector<int> sequence;
