@@ -63,16 +63,16 @@ void solve(int boundl, int boundr, std::vector<std::vector<DPEntry>>& dp,
     int vectl = boundl;
     int vectr = boundr - boundl;
     
-    if (dp[vectl][vectr].choice != -1){
-        // std::cout << "For the boundl=" << boundl << ", boundr=" << boundr << ";         KNOWN  " << dp[vectl][vectr].energy << "\n";
-        return dp[vectl][vectr].energy;
-    }
+    // if (dp[vectl][vectr].choice != -1){
+    //     // std::cout << "For the boundl=" << boundl << ", boundr=" << boundr << ";         KNOWN  " << dp[vectl][vectr].energy << "\n";
+    //     return dp[vectl][vectr].energy;
+    // }
     
     if (boundl == boundr) {
         dp[vectl][vectr].energy = getEnergy(boundl-1, boundl, boundl+1, powers, bioClasses);
         dp[vectl][vectr].choice = boundl;
         // std::cout << "For the boundl=" << boundl << ", boundr=" << boundr << ";         SINGLE " << dp[vectl][vectr].energy << "\n";
-        return dp[vectl][vectr].energy;
+        //return dp[vectl][vectr].energy;
     }
     
     int solution = boundl;
