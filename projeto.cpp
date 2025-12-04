@@ -57,7 +57,7 @@ val getEnergy(int l, int i, int r, const std::vector<powerval>& powers,
 }
 
 
-val solve(int boundl, int boundr, std::vector<std::vector<DPEntry>>& dp,
+void solve(int boundl, int boundr, std::vector<std::vector<DPEntry>>& dp,
           const std::vector<powerval>& powers, const std::vector<bioval>& bioClasses) {
     // std::cout << "doing l=" << boundl << ", r=" << boundr << "\n";
     int vectl = boundl;
@@ -97,11 +97,11 @@ val solve(int boundl, int boundr, std::vector<std::vector<DPEntry>>& dp,
     dp[vectl][vectr].energy = bestEnergy;
     dp[vectl][vectr].choice = solution;
     // std::cout << "For the boundl=" << boundl << ", boundr=" << boundr << ";         we got " << bestEnergy << "\n";
-    return bestEnergy;
+    //return bestEnergy;
 }
 
 void traceback(int boundl, int boundr, const std::vector<std::vector<DPEntry>>& dp,
-                 std::vector<int>& sequence) {
+                 std::vector<bioval>& sequence) {
     if (boundl > boundr) return;
     
     int vectl = boundl;
@@ -145,14 +145,13 @@ int main(int argc, char* argv[]) {
     
     std::vector<std::vector<DPEntry>> dp(n, std::vector<DPEntry>(n));
 
-    
-    val totalEnergy = 0;
     for (int i=0; i<n; i++)
         for (int j=0; j<n-i; j++)
-            totalEnergy = solve(j, j+i, dp, powers, bioClasses);
+            solve(j, j+i, dp, powers, bioClasses);
+    val totalEnergy = dp[0][n-1].energy;
     
     // Get the sequence.
-    std::vector<int> sequence;
+    std::vector<bioval> sequence;
     traceback(0, n-1, dp, sequence);
     
     std::cout << totalEnergy << "\n";
