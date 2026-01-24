@@ -7,3 +7,6 @@ This project was built in c++ to ensure performance and to keep things simple.
 Consider [a Rust implementation](https://github.com/Cosm-gedenke/ASA-analysis-and-synthesis-of-algorithms-LEIC-IST/tree/main/Project1) in case of preference.
 
 Read the [assignment statement](p1.pdf) for more information.
+
+### Grade
+- 17.65
