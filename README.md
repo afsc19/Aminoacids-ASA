@@ -1,5 +1,5 @@
 # Aminoacids-ASA
-Algorithms analysis and synthesis, Project 3 (LEIC-A 25/26 - IST)
+Algorithms analysis and synthesis, Project 1 (LEIC-A 25/26 - IST)
 
 The project consists of an algorithm that uses Dynamic Programming (DP) to find the best aminoacids removal order, from a given sequence of aminoacids, minimizing the sum of the removal energies.
 
