@@ -8,5 +8,5 @@ Consider [a Rust implementation](https://github.com/Cosm-gedenke/ASA-analysis-an
 
 Read the [assignment statement](p1.pdf) for more information.
 
-### Grade
+### Grade (0-20)
 - 17.65
